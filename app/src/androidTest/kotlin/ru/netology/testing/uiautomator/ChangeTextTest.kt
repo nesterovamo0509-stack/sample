@@ -71,6 +71,46 @@ class ChangeTextTest {
 //        assertEquals(result, textToSet)
 //    }
 
+    @Test
+    fun testEmptyText() {
+        val packageName = MODEL_PACKAGE
+
+        waitForPackage(packageName)
+
+        val initialText =
+            device.findObject(By.res(packageName, "textToBeChanged")).text
+
+        device.findObject(By.res(packageName, "userInput")).text = "   "
+
+        device.findObject(By.res(packageName, "buttonChange")).click()
+
+        val result =
+            device.findObject(By.res(packageName, "textToBeChanged")).text
+
+        assertEquals(initialText, result)
+    }
+
+    @Test
+    fun testOpenTextInAnotherActivity() {
+        val packageName = MODEL_PACKAGE
+
+        waitForPackage(packageName)
+
+        device.findObject(By.res(packageName, "userInput")).text = textToSet
+
+        device.findObject(By.res(packageName, "buttonActivity")).click()
+
+        device.wait(
+            Until.hasObject(By.res(packageName, "text")),
+            TIMEOUT
+        )
+
+        val result =
+            device.findObject(By.res(packageName, "text")).text
+
+        assertEquals(textToSet, result)
+    }
+
     private fun waitForPackage(packageName: String) {
         val context = ApplicationProvider.getApplicationContext<Context>()
         val intent = context.packageManager.getLaunchIntentForPackage(packageName)
